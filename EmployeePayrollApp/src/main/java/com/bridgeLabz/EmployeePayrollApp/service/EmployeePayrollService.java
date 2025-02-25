@@ -6,36 +6,44 @@ import com.bridgeLabz.EmployeePayrollApp.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EmployeePayrollService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+
+    private final List<Employee> employeeList = new ArrayList<>();
+    private long employeeIdCounter = 1; // Counter for assigning unique IDs
 
     public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
+
+        return employeeList;
     }
 
     public Optional<Employee> getEmployeeById(Long id){
-        return employeeRepository.findById(id);
+
+        return employeeList.stream().filter(emp -> emp.getId().equals(id)).findFirst();
     }
 
     public Employee createEmployee(Employee employee){
-        return employeeRepository.save(employee);
+
+        employee.setId(employeeIdCounter++); // Assign a unique ID
+        employeeList.add(employee);
+        return employee;
     }
 
     public Optional<Employee> updateEmployee(Long id , Employee updatedEmployee){
-        return employeeRepository.findById(id).map(employee -> {
+        return getEmployeeById(id).map(employee -> {
             employee.setName(updatedEmployee.getName());
             employee.setSalary(updatedEmployee.getSalary());
-            return employeeRepository.save(employee);
+            return employee;
         });
     }
 
-    public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
+    public boolean deleteEmployee(Long id) {
+
+        return employeeList.removeIf(employee -> employee.getId().equals(id));
     }
 }
