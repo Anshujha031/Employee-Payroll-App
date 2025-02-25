@@ -1,5 +1,6 @@
 package com.bridgeLabz.EmployeePayrollApp.controller;
 
+import com.bridgeLabz.EmployeePayrollApp.dto.EmployeeDTO;
 import com.bridgeLabz.EmployeePayrollApp.model.Employee;
 import com.bridgeLabz.EmployeePayrollApp.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +29,18 @@ public class EmployeePayrollController {
 
     //POST - add new employees
     @PostMapping
-    public Employee createEmployee(@RequestBody Employee employee){
+    public Employee createEmployee(@RequestBody EmployeeDTO employeeDTO){
+        Employee employee = new Employee(employeeDTO.getName(),employeeDTO.getSalary());
         return employeeRepository.save(employee);
     }
 
     //PUT - update employee
     @PutMapping("/{id}")
-    public Employee updateEmployee(@PathVariable Long id , @RequestBody Employee updatedEmployee){
+    public Employee updateEmployee(@PathVariable Long id , @RequestBody Employee updatedEmployeeDTO){
         return employeeRepository.findById(id)
                 .map(employee -> {
-                    employee.setName(updatedEmployee.getName());
-                    employee.setSalary(updatedEmployee.getSalary());
+                    employee.setName(updatedEmployeeDTO.getName());
+                    employee.setSalary(updatedEmployeeDTO.getSalary());
                     return employeeRepository.save(employee);
                 })
                 .orElse(null);
