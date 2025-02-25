@@ -1,10 +1,14 @@
 package com.bridgeLabz.EmployeePayrollApp.controller;
 
-import com.bridgeLabz.EmployeePayrollApp.dto.EmployeeDTO;
 import com.bridgeLabz.EmployeePayrollApp.model.Employee;
 import com.bridgeLabz.EmployeePayrollApp.repository.EmployeeRepository;
+import com.bridgeLabz.EmployeePayrollApp.service.EmployeePayrollService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+
+
+
 
 import java.util.List;
 
@@ -13,42 +17,36 @@ import java.util.List;
 public class EmployeePayrollController {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private EmployeePayrollService employeePayrollService;
 
     //GET all employees
     @GetMapping
     public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
+        return employeePayrollService.getAllEmployees();
     }
 
     // GET employee by ID
     @GetMapping("/{id}")
     public Employee getEmployeeById(@PathVariable Long id) {
-        return employeeRepository.findById(id).orElse(null);
+        return employeePayrollService.getEmployeeById(id).orElse(null);
     }
 
     //POST - add new employees
     @PostMapping
-    public Employee createEmployee(@RequestBody EmployeeDTO employeeDTO){
-        Employee employee = new Employee(employeeDTO.getName(),employeeDTO.getSalary());
-        return employeeRepository.save(employee);
+    public Employee createEmployee(@RequestBody Employee employee){
+        return employeePayrollService.createEmployee(employee);
     }
 
     //PUT - update employee
     @PutMapping("/{id}")
-    public Employee updateEmployee(@PathVariable Long id , @RequestBody Employee updatedEmployeeDTO){
-        return employeeRepository.findById(id)
-                .map(employee -> {
-                    employee.setName(updatedEmployeeDTO.getName());
-                    employee.setSalary(updatedEmployeeDTO.getSalary());
-                    return employeeRepository.save(employee);
-                })
-                .orElse(null);
+    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
+        return employeePayrollService.updateEmployee(id, updatedEmployee).orElse(null);
     }
+
     // DELETE employee
     @DeleteMapping("/{id}")
     public String deleteEmployee(@PathVariable Long id) {
-        employeeRepository.deleteById(id);
+        employeePayrollService.deleteEmployee(id);
         return "Employee deleted successfully";
     }
 }
