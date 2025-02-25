@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "employees")
+//adding lombok uc 6
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
